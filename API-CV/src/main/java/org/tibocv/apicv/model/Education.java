@@ -23,6 +23,7 @@ public class Education {
     private String endDate;
 
     @Column(columnDefinition = "TEXT")
+    @ElementCollection
     private List<String> relevantCourses;
 
     private String logo;

@@ -90,6 +90,9 @@ public class PortfolioService {
                 .location(profile.getLocation())
                 .githubUrl(profile.getGithubUrl())
                 .linkedinUrl(profile.getLinkedinUrl())
+                .phone(profile.getPhone())
+                .tryHackMeUrl(profile.getTryHackMeUrl())
+                .cvPdfUrl(profile.getCvPdfUrl())
                 .build();
     }
 }
