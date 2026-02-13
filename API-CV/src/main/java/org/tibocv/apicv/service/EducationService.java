@@ -35,7 +35,10 @@ public class EducationService {
         education1.setStartDate(education.getStartDate());
         education1.setEndDate(education.getEndDate());
         education1.setRelevantCourses(education.getRelevantCourses());
+        education1.setDescription(education.getDescription());
+        education1.setLocation(education.getLocation());
         education1.setLogo(education.getLogo());
+        education1.setUrl(education.getUrl());
         return educationRepository.save(education1);
     }
 }

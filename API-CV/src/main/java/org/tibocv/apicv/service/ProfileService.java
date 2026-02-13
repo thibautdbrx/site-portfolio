@@ -35,6 +35,7 @@ public class ProfileService {
         profile1.setTryHackMeUrl(profile.getTryHackMeUrl());
         profile1.setFirstLanguage(profile.getFirstLanguage());
         profile1.setSecondLanguage(profile.getSecondLanguage());
+        profile1.setAvatarUrl(profile.getAvatarUrl());
         profileRepository.save(profile1);
     }
 }

@@ -19,4 +19,7 @@ public class EducationDTO {
     private String endDate;
     private List<String> relevantCourses;
     private String logo;
+    private String url;
+    private String description;
+    private String location;
 }

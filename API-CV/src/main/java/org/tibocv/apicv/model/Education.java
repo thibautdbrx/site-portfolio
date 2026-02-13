@@ -18,6 +18,9 @@ public class Education {
     private String schoolName;
     private String degree; // ex: "Diplôme d'ingénieur"
     private String fieldOfStudy; // ex: "Informatique"
+    private String location;
+
+    private String description;
 
     private String startDate;
     private String endDate;
@@ -27,4 +30,5 @@ public class Education {
     private List<String> relevantCourses;
 
     private String logo;
+    private String url;
 }

@@ -21,6 +21,7 @@ public class ProfileDTO {
     private String location;
     private String firstLanguage;
     private String secondLanguage;
+    private String avatarUrl;
     private String phone;
     private String githubUrl;
     private String linkedinUrl;

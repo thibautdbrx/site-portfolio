@@ -1,11 +1,14 @@
 export interface EducationDTO {
-  schoolName: string;
-  degree: string;
-  fieldOfStudy: string;
-  startDate: string;
-  endDate: string;
-  relevantCourses: string[];
-  logo: string;
+  schoolName: string
+  degree: string
+  fieldOfStudy: string
+  startDate: string
+  endDate: string
+  relevantCourses: string[]
+  logo: string
+  url: string
+  description: string
+  location: string
 }
 
 export interface ExperienceDTO {
@@ -52,6 +55,7 @@ export interface ProfileDTO {
   linkedinUrl: string;
   tryHackMeUrl: string;
   cvPdfUrl: string;
+  avatarUrl: string;
 }
 
 export interface SkillDTO {

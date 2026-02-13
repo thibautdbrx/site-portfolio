@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getPortfolio } from '../services/portfolioService'
+import { getPortfolio, downloadCV } from '../services/portfolioService'
 import type { PortfolioDTO } from '../types/PortfolioDTO'
-import { downloadCV } from '../services/portfolioService'
+import { Github, Linkedin, Shield, FileText, ExternalLink } from 'lucide-vue-next'
+
+// --- IMPORT DES COMPOSANTS ---
+import Header from '../components/Header.vue'
+import Footer from '../components/Footer.vue'
+import * as https from 'node:https'
 
 const portfolio = ref<PortfolioDTO | null>(null)
 const loading = ref(true)
 
-// Petit helper de sécurité pour s'assurer que l'URL est bien formée
+const FILE_BASE_URL = import.meta.env.VITE_FILE_URL || 'http://localhost:8080/api/files'
+
 const formatUrl = (url: string | undefined) => {
   if (!url) return '#'
   return url.startsWith('http') ? url : `https://${url}`
@@ -16,7 +22,6 @@ const formatUrl = (url: string | undefined) => {
 onMounted(async () => {
   try {
     portfolio.value = await getPortfolio()
-    console.log('Données chargées :', portfolio.value)
   } catch (error) {
     console.error('Erreur API:', error)
   } finally {
@@ -26,260 +31,222 @@ onMounted(async () => {
 
 const handleDownload = async () => {
   if (!portfolio.value?.profile.cvPdfUrl) return
-
   try {
     const blob = await downloadCV(portfolio.value.profile.cvPdfUrl)
-
-    // 1. Créer une URL temporaire pour le Blob
     const url = window.URL.createObjectURL(new Blob([blob]))
-
-    // 2. Créer un élément <a> invisible
     const link = document.createElement('a')
     link.href = url
-
-    // 3. Définir le nom du fichier
     link.setAttribute('download', 'CV_Thibaut_Debreux.pdf')
-
-    // 4. L'ajouter au document, cliquer, et le supprimer
     document.body.appendChild(link)
     link.click()
     link.remove()
-
-    // 5. Libérer la mémoire
     window.URL.revokeObjectURL(url)
   } catch (error) {
-    console.error('Erreur lors du téléchargement du PDF :', error)
-    alert('Impossible de télécharger le CV.')
+    console.error('Erreur Download:', error)
+    alert('Erreur lors du téléchargement du CV')
   }
 }
 </script>
 
 <template>
-  <div v-if="loading" class="loader">
-    <div class="spinner"></div>
-    <p>Initialisation du système sécurisé...</p>
-  </div>
+  <div class="min-h-screen bg-[#0a0a0a] text-gray-300 selection:bg-emerald-500/30">
+    <Header :email="portfolio?.profile.email" />
 
-  <main v-else-if="portfolio" class="container">
-    <section id="profile" class="hero">
-      <div class="profile-header">
-        <img
-          v-if="portfolio.profile.photo"
-          :src="portfolio.profile.photo"
-          class="avatar"
-          alt="Photo de profil"
-        />
-        <div class="profile-info">
-          <h1>{{ portfolio.profile.firstName }} {{ portfolio.profile.lastName }}</h1>
-          <h2 class="title-gradient">{{ portfolio.profile.title }}</h2>
-          <p class="bio">{{ portfolio.profile.bio }}</p>
+    <div
+      v-if="loading"
+      class="flex items-center justify-center h-screen font-mono text-emerald-500"
+    >
+      <span class="animate-pulse tracking-tighter">BOOTING_SYSTEM...</span>
+    </div>
 
-          <div class="social-links">
+    <main v-else-if="portfolio" class="max-w-5xl mx-auto px-6 pt-32 pb-16">
+      <section
+        id="profile"
+        class="mb-24 flex flex-col md:flex-row items-center gap-12 bg-neutral-900/30 p-10 rounded-3xl border border-white/5"
+      >
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-emerald-500 rounded-full blur opacity-10 group-hover:opacity-30 transition duration-500"
+          ></div>
+          <img
+            v-if="portfolio.profile.avatarUrl"
+            :src="
+              portfolio.profile.avatarUrl.startsWith('http')
+                ? portfolio.profile.avatarUrl
+                : FILE_BASE_URL + '/' + portfolio.profile.avatarUrl
+            "
+            class="relative w-40 h-40 rounded-full object-cover border-2 border-emerald-500/20 shadow-2xl"
+            alt="Profil"
+          />
+        </div>
+
+        <div class="flex-1 text-center md:text-left">
+          <h1 class="text-5xl font-bold text-white mb-2">
+            {{ portfolio.profile.firstName }}
+            <span class="text-emerald-500">{{ portfolio.profile.lastName }}</span>
+          </h1>
+          <p class="text-emerald-400 font-mono text-sm uppercase tracking-widest mb-6 italic">
+            // {{ portfolio.profile.title }}
+          </p>
+          <p class="text-gray-400 leading-relaxed mb-8">{{ portfolio.profile.bio }}</p>
+
+          <div class="flex flex-wrap gap-3 justify-center md:justify-start">
             <a
               :href="formatUrl(portfolio.profile.githubUrl)"
               target="_blank"
-              rel="noopener noreferrer"
-              class="link-item"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 hover:border-emerald-500/50 hover:bg-white/5 transition-all text-sm font-medium text-gray-400 hover:text-white group"
             >
-              <span class="icon">🔗</span> GitHub
+              <Github :size="18" class="group-hover:text-emerald-400 transition-colors" />
+              <span>GitHub</span>
             </a>
             <a
               :href="formatUrl(portfolio.profile.linkedinUrl)"
               target="_blank"
-              rel="noopener noreferrer"
-              class="link-item"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 hover:border-emerald-500/50 hover:bg-white/5 transition-all text-sm font-medium text-gray-400 hover:text-white group"
             >
-              <span class="icon">🔗</span> LinkedIn
+              <Linkedin :size="18" class="group-hover:text-emerald-400 transition-colors" />
+              <span>LinkedIn</span>
             </a>
             <a
               :href="formatUrl(portfolio.profile.tryHackMeUrl)"
               target="_blank"
-              rel="noopener noreferrer"
-              class="link-item"
+              class="flex items-center gap-2 px-4 py-2 rounded-xl border border-emerald-500/10 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all text-sm font-medium text-emerald-500/80 hover:text-emerald-400 group"
             >
-              <span class="icon">🛡️</span> TryHackMe
+              <Shield :size="18" class="group-hover:text-emerald-400 transition-colors" />
+              <span>TryHackMe</span>
             </a>
-            <button @click="handleDownload" class="btn-cv">📄 Télécharger CV</button>
+            <button
+              @click="handleDownload"
+              class="flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-sm transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
+            >
+              <FileText :size="18" />
+              Télécharger CV
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section id="projects" class="section-padding">
-      <h3 class="section-title">Projets Récents</h3>
-      <div class="grid">
-        <div v-for="project in portfolio.projects" :key="project.title" class="card">
-          <div class="card-content">
-            <h4>{{ project.title }}</h4>
-            <p class="summary">{{ project.summary }}</p>
-            <div class="tech-stack">
-              <span v-for="tech in project.technologies" :key="tech" class="badge">
-                {{ tech }}
-              </span>
-            </div>
-            <div class="card-footer">
+      <section id="projects" class="mb-24">
+        <h3 class="text-xl font-bold text-white mb-10 flex items-center gap-3 italic">
+          <span class="text-emerald-500 font-mono">01.</span> Projets_
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div
+            v-for="project in portfolio.projects"
+            :key="project.title"
+            class="border-white/3 rounded-2xl p-8 hover:border-emerald-500/30 transition-all group relative"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <h4
+                class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"
+              >
+                {{ project.title }}
+              </h4>
               <a
                 v-if="project.githubUrl"
                 :href="formatUrl(project.githubUrl)"
                 target="_blank"
-                rel="noopener"
-                >Code Source</a
+                class="text-gray-500 hover:text-emerald-400 transition-colors"
               >
+                <ExternalLink :size="20" />
+              </a>
+            </div>
+            <p class="text-gray-400 text-sm mb-8 leading-relaxed">{{ project.summary }}</p>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="tech in project.technologies"
+                :key="tech"
+                class="text-[10px] font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/5 text-emerald-500 border border-emerald-500/10 uppercase tracking-wider"
+              >
+                {{ tech }}
+              </span>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
 
-  <div v-else class="error-state">
-    <p>Erreur de communication avec le serveur (Vérifie le backend et le CORS).</p>
+      <section id="formation">
+          <h3 class="text-xl font-bold text-white mb-10 flex items-center gap-3 italic">
+            <span class="text-emerald-500 font-mono">03.</span> Expériences_
+          </h3>
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+            <div
+              v-for="education in portfolio.educations"
+              :key="education.schoolName"
+              class="border-white/5 rounded-2xl p-8 hover:border-emerald-500/30 transition-all group relative"
+            >
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4
+                    class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"
+                  >
+                    {{ education.degree }} {{education.fieldOfStudy}}
+                  </h4>
+                </div>
+
+                <p class="text-gray-400 text-sm leading-relaxed shrink-0 ml-4">
+                  <span>{{ education.startDate }}</span>
+                  <span v-if="education.endDate"> - {{ education.endDate }}</span>
+                </p>
+              </div>
+
+
+              <div class="flex flex-wrap gap-3">
+              <span
+                v-for="tech in education.relevantCourses"
+                :key="tech"
+                class="text-[10px] font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/5 text-emerald-500 border border-emerald-500/10 uppercase tracking-wider"
+              >
+                {{ tech }}
+              </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      <section id="experiences">
+        <h3 class="text-xl font-bold text-white mb-10 flex items-center gap-3 italic">
+          <span class="text-emerald-500 font-mono">03.</span> Expériences_
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div
+            v-for="experience in portfolio.experiences"
+            :key="experience.companyName"
+            class="border-white/5 rounded-2xl p-8 hover:border-emerald-500/30 transition-all group relative"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <h4
+                  class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"
+                >
+                  {{ experience.companyName }}
+                </h4>
+                <p class="text-emerald-400 font-medium">{{ experience.position }}</p>
+              </div>
+
+              <p class="text-gray-400 text-sm leading-relaxed shrink-0 ml-4">
+                <span>{{ experience.startDate }}</span>
+                <span v-if="experience.endDate"> - {{ experience.endDate }}</span>
+              </p>
+            </div>
+            <div>
+              <p class="flex mb-2">{{ experience.location }}</p>
+              <p>{{ experience.description }}</p>
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <span
+                v-for="tech in experience.toolsUsed"
+                :key="tech"
+                class="text-[10px] font-mono font-bold px-2.5 py-1 rounded bg-emerald-500/5 text-emerald-500 border border-emerald-500/10 uppercase tracking-wider"
+              >
+                {{ tech }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </main>
   </div>
 </template>
-
-<style scoped>
-/* STRUCTURE */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem;
-  color: #2d3436;
-}
-
-.hero {
-  background: #ffffff;
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  margin-bottom: 3rem;
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-/* TYPOGRAPHIE */
-h1 {
-  font-size: 2.5rem;
-  margin: 0;
-}
-.title-gradient {
-  font-size: 1.5rem;
-  background: linear-gradient(90deg, #6c5ce7, #a29bfe);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0.5rem 0 1.5rem 0;
-}
-.bio {
-  line-height: 1.6;
-  color: #636e72;
-  max-width: 600px;
-}
-
-/* LIENS & BOUTONS */
-.social-links {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-}
-
-.link-item {
-  text-decoration: none;
-  color: #2d3436;
-  font-weight: 500;
-  transition: color 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.link-item:hover {
-  color: #6c5ce7;
-}
-
-.btn-cv {
-  background: #6c5ce7;
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: bold;
-  transition:
-    transform 0.2s,
-    background 0.3s;
-}
-
-.btn-cv:hover {
-  background: #5b4bc4;
-  transform: translateY(-2px);
-}
-
-/* GRILLE DE PROJETS */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #edf2f7;
-  transition: transform 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card-content {
-  padding: 1.5rem;
-}
-
-.badge {
-  background: #f1f2f6;
-  color: #57606f;
-  padding: 0.3rem 0.7rem;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  margin-right: 0.5rem;
-  margin-top: 0.5rem;
-  display: inline-block;
-}
-
-.avatar {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #f1f2f6;
-}
-
-/* LOADER */
-.loader {
-  text-align: center;
-  margin-top: 100px;
-}
-.spinner {
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border-left-color: #6c5ce7;
-  animation: spin 1s linear infinite;
-  display: inline-block;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

@@ -36,7 +36,6 @@ public class ProjectService {
         project1.setSecurityFocus(project.getSecurityFocus());
         project1.setDemoUrl(project.getDemoUrl());
         project1.setImageUrl(project.getImageUrl());
-        project1.setFeatured(project.isFeatured());
         return projectRepository.save(project1);
     }
 }

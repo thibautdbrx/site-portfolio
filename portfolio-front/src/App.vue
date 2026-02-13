@@ -1,21 +1,11 @@
+<script setup lang="ts">
+import Header from '@/components/Header.vue'
+</script>
 <template>
-  <nav>
-    <router-link to="/">Accueil</router-link> |
-    <router-link to="/admin">Admin</router-link>
-  </nav>
-
+  <Header/>
   <router-view />
 </template>
 
 <style>
-/* CSS global très basique */
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: #f4f4f4;
-}
-nav {
-  margin-bottom: 20px;
-}
+
 </style>

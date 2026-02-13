@@ -34,7 +34,4 @@ public class Project {
     private String githubUrl;
     private String demoUrl;
     private String imageUrl;
-
-    private boolean isFeatured = false; // Pour mettre en avant sur la home
-
 }

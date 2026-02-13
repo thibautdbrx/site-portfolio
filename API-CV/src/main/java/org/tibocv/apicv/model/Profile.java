@@ -32,6 +32,8 @@ public class Profile {
 
     private String phone;
 
+    private String avatarUrl;
+
     // Liens vers tes réseaux/plateformes cyber
     private String githubUrl;
     private String linkedinUrl;

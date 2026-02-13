@@ -50,11 +50,14 @@ public class PortfolioService {
         return EducationDTO.builder()
                 .schoolName(education.getSchoolName())
                 .degree(education.getDegree())
+                .description(education.getDescription())
+                .location(education.getLocation())
                 .fieldOfStudy(education.getFieldOfStudy())
                 .startDate(education.getStartDate())
                 .endDate(education.getEndDate())
                 .relevantCourses(education.getRelevantCourses())
                 .logo(education.getLogo())
+                .url(education.getUrl())
                 .build();
     }
 
@@ -93,6 +96,7 @@ public class PortfolioService {
                 .phone(profile.getPhone())
                 .tryHackMeUrl(profile.getTryHackMeUrl())
                 .cvPdfUrl(profile.getCvPdfUrl())
+                .avatarUrl(profile.getAvatarUrl())
                 .build();
     }
 }
