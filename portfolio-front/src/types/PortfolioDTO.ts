@@ -1,4 +1,5 @@
 export interface EducationDTO {
+  id: number
   schoolName: string
   degree: string
   fieldOfStudy: string
@@ -12,6 +13,7 @@ export interface EducationDTO {
 }
 
 export interface ExperienceDTO {
+  id: number
   companyName: string;
   position: string;
   location: string;
@@ -30,6 +32,7 @@ export interface PortfolioDTO {
 }
 
 export interface ProjectDTO {
+  id: number;
   title: string;
   summary: string;
   fullDescription: string;
@@ -38,13 +41,14 @@ export interface ProjectDTO {
   githubUrl: string;
   demoUrl: string;
   imageUrl: string;
-  isFeatured: boolean;
 }
 
 export interface ProfileDTO {
+  id: number;
   firstName: string;
   lastName: string;
   title: string;
+  phone: string;
   bio: string;
   email: string;
   location: string;
@@ -59,6 +63,7 @@ export interface ProfileDTO {
 }
 
 export interface SkillDTO {
+  id: number;
   name: string;
   category: string;
   level: string;

@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectDTO {
+    private Long id;
     private String title;
     private String summary;
     private String fullDescription;

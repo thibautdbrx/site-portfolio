@@ -58,7 +58,12 @@ const handleDownload = async () => {
 
 <template>
   <div class="min-h-screen bg-[#0a0a0a] text-gray-300 selection:bg-emerald-500/30 font-sans">
-    <Header :email="portfolio?.profile.email" />
+    <Header
+      :email="portfolio?.profile.email"
+      :phone="portfolio?.profile.phone"
+      :first-name="portfolio?.profile.firstName"
+      :last-name="portfolio?.profile.lastName"
+    />
 
     <div
       v-if="loading"
@@ -155,22 +160,38 @@ const handleDownload = async () => {
         <h3 class="section-title">
           <span class="text-emerald-500 font-mono">02.</span> Formation_
         </h3>
+
         <div class="space-y-6">
           <div v-for="edu in portfolio.educations" :key="edu.schoolName" class="card group">
-            <div class="flex flex-col md:flex-row justify-between mb-4 gap-2">
-              <div>
-                <h4
-                  class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"
+            <div class="flex flex-col md:flex-row justify-between mb-4 gap-4">
+              <div class="flex items-start gap-4">
+                <div
+                  v-if="edu.logo"
+                  class="shrink-0 bg-white p-1 rounded-lg w-12 h-12 flex items-center justify-center border border-white/10 overflow-hidden"
                 >
-                  {{ edu.schoolName }}
-                </h4>
-                <p class="text-emerald-400 font-medium">
-                  {{ edu.degree }} <span class="text-gray-600 mx-2">|</span>
-                  <span class="text-gray-400 text-sm">{{ edu.fieldOfStudy }}</span>
-                </p>
+                  <img
+                    :src="edu.logo.startsWith('http') ? edu.logo : `${FILE_BASE_URL}/${edu.logo}`"
+                    alt="School Logo"
+                    class="w-full h-full object-contain"
+                  />
+                </div>
+
+                <div>
+                  <h4
+                    class="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors"
+                  >
+                    {{ edu.schoolName }}
+                  </h4>
+                  <p class="text-emerald-400 font-medium">
+                    {{ edu.degree }}
+                    <span class="text-gray-600 mx-2">|</span>
+                    <span class="text-gray-400 text-sm">{{ edu.fieldOfStudy }}</span>
+                  </p>
+                </div>
               </div>
+
               <div
-                class="text-left md:text-right font-mono text-xs text-gray-500 uppercase tracking-wider"
+                class="text-left md:text-right font-mono text-xs text-gray-500 uppercase tracking-wider shrink-0 mt-1"
               >
                 <div class="flex items-center md:justify-end gap-2 mb-1">
                   <MapPin :size="12" /> {{ edu.location }}
@@ -180,11 +201,13 @@ const handleDownload = async () => {
                 </div>
               </div>
             </div>
-            <p class="text-gray-400 text-sm mb-6">{{ edu.description }}</p>
+
+            <p class="text-gray-400 text-sm mb-6 leading-relaxed">{{ edu.description }}</p>
+
             <div class="flex flex-wrap gap-2">
-              <span v-for="course in edu.relevantCourses" :key="course" class="badge-tech">{{
-                course
-              }}</span>
+              <span v-for="course in edu.relevantCourses" :key="course" class="badge-tech">
+                {{ course }}
+              </span>
             </div>
           </div>
         </div>

@@ -22,4 +22,5 @@ public class EducationDTO {
     private String url;
     private String description;
     private String location;
+    private Long id;
 }

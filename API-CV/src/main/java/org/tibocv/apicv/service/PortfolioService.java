@@ -39,6 +39,7 @@ public class PortfolioService {
 
     private SkillDTO convertToSkillDto(Skill skill) {
         return SkillDTO.builder()
+                .id(skill.getId())
                 .name(skill.getName())
                 .category(skill.getCategory())
                 .level(skill.getLevel())
@@ -48,6 +49,7 @@ public class PortfolioService {
 
     private EducationDTO convertToEducationDto(Education education) {
         return EducationDTO.builder()
+                .id(education.getId())
                 .schoolName(education.getSchoolName())
                 .degree(education.getDegree())
                 .description(education.getDescription())
@@ -63,6 +65,7 @@ public class PortfolioService {
 
     private ExperienceDTO convertToExperienceDto(Experience experience) {
         return ExperienceDTO.builder()
+                .id(experience.getId())
                 .companyName(experience.getCompanyName())
                 .position(experience.getPosition())
                 .location(experience.getLocation())
@@ -76,6 +79,7 @@ public class PortfolioService {
     // Exemple de convertisseur (Entity -> DTO)
     private ProjectDTO convertToProjectDto(Project project) {
         return ProjectDTO.builder()
+                .id(project.getId())
                 .title(project.getTitle())
                 .summary(project.getSummary())
                 .technologies(project.getTechnologies())
@@ -85,6 +89,7 @@ public class PortfolioService {
 
     private ProfileDTO convertToProfileDto(Profile profile) {
         return ProfileDTO.builder()
+                .id(profile.getId())
                 .firstName(profile.getFirstName())
                 .lastName(profile.getLastName())
                 .title(profile.getTitle())

@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExperienceDTO {
+    private Long id;
     private String companyName;
     private String position;
     private String location;
