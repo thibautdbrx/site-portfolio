@@ -102,6 +102,8 @@ public class PortfolioService {
                 .tryHackMeUrl(profile.getTryHackMeUrl())
                 .cvPdfUrl(profile.getCvPdfUrl())
                 .avatarUrl(profile.getAvatarUrl())
+                .firstLanguage(profile.getFirstLanguage())
+                .secondLanguage(profile.getSecondLanguage())
                 .build();
     }
 }

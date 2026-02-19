@@ -14,8 +14,13 @@ const handleLogin = async () => {
       password: password.value,
     })
 
+    if (response.status == 200) {
+      document.cookie = `token=${response.data}; path=/`
+      console.log(document.cookie)
+    }
+
     // On stocke le token
-    localStorage.setItem('token', response.data.token)
+    //localStorage.setItem('token', response.data.token)
 
     // On redirige vers l'admin
     router.push('/admin')
@@ -35,13 +40,13 @@ const handleLogin = async () => {
         v-model="username"
         type="text"
         placeholder="Utilisateur"
-        class="w-full bg-white/5 border border-white/10 p-3 rounded-lg mb-4 outline-none focus:border-emerald-500"
+        class="w-full bg-white/5 border border-white/10 p-3 rounded-lg mb-4 outline-none focus:border-emerald-500 text-white"
       />
       <input
         v-model="password"
         type="password"
         placeholder="Code d'accès"
-        class="w-full bg-white/5 border border-white/10 p-3 rounded-lg mb-6 outline-none focus:border-emerald-500"
+        class="w-full bg-white/5 border border-white/10 p-3 rounded-lg mb-6 outline-none focus:border-emerald-500 text-white"
       />
       <button
         @click="handleLogin"

@@ -20,6 +20,29 @@ import {
   Image as ImageIcon,
 } from 'lucide-vue-next'
 
+// Dans ton composant Admin.vue ou ton Store (Pinia/Vuex)
+import { jwtDecode } from 'jwt-decode'
+import router from '@/router'
+
+const isAuthenticated = () => {
+  // 1. On récupère le cookie "token"
+  const token = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('token='))
+    ?.split('=')[1]
+
+  if (!token) return router.push('/login')
+
+  try {
+    // 2. On vérifie si le token est expiré
+    const decoded = jwtDecode(token)
+    const currentTime = Date.now() / 1000
+    return decoded.exp > currentTime
+  } catch (e) {
+    return router.push('/login')
+  }
+}
+
 // --- ÉTAT GLOBAL ---
 const portfolio = ref<PortfolioDTO | null>(null)
 const loading = ref(true)

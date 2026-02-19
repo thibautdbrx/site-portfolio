@@ -28,18 +28,18 @@ const copyEmail = () => {
     class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/5"
   >
     <nav class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-      <a href="#profile" class="flex items-center gap-2 group cursor-pointer">
+      <a href="/" class="flex items-center gap-2 group cursor-pointer">
         <span class="font-mono text-sm font-bold tracking-tighter text-white uppercase">
           Thibaut<span class="text-emerald-500">.portfolio</span>
         </span>
       </a>
 
       <div class="hidden md:flex items-center gap-8">
-        <a href="#profile" class="nav-link">Profil</a>
-        <a href="#projects" class="nav-link">Projets</a>
-        <a href="#formation" class="nav-link">Formation</a>
-        <a href="#experiences" class="nav-link">Expériences</a>
-        <a href="#softskills" class="nav-link">Soft Skills</a>
+        <a href="/#profile" class="nav-link">Profil</a>
+        <a href="/#projects" class="nav-link">Projets</a>
+        <a href="/#formation" class="nav-link">Formation</a>
+        <a href="/#experiences" class="nav-link">Expériences</a>
+        <a href="/#softskills" class="nav-link">Soft Skills</a>
 
         <button
           @click="isContactOpen = true"

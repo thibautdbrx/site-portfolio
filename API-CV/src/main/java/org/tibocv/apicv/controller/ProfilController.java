@@ -16,11 +16,6 @@ public class ProfilController {
         this.profileService = profileService;
     }
 
-    @GetMapping
-    public Profile getProfil(){
-        return profileService.getProfil();
-    }
-
     @PutMapping
     public void updateProfile(@RequestBody @Valid ProfileDTO profile){ profileService.updateProfil(profile); }
 }

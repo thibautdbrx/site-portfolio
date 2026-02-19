@@ -7,25 +7,35 @@ import type {
   SkillDTO,
   ProfileDTO,
 } from '../types/PortfolioDTO'
+import router from '@/router'
 
 // On centralise l'URL pour plus de flexibilité
 const API_BASE_URL = 'http://localhost:8080/api'
 
 const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      console.warn('Accès refusé ou session expirée. Redirection vers login.')
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
+      document.cookie = ''
+
+      localStorage.removeItem('token')
+
+      // 3. Rediriger vers la page de login
+      //router.push('/login')
+    }
+    return Promise.reject(error)
+  },
+)
 
 // Exportation de l'objet service contenant toutes les méthodes
 export const portfolioService = {
